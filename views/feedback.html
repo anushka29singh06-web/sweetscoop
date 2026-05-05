@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Scoops — Feedback</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <style>
+    /* ── Page Layout ── */
+    .feedback-page {
+      padding: 80px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .feedback-header {
+      text-align: center;
+      margin-bottom: 80px;
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .feedback-header .eyebrow {
+      font-size: 11px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .feedback-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 6vw, 72px);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+    }
+
+    .feedback-header h1 em { color: var(--gold); font-style: italic; }
+
+    /* ── Summary Bar ── */
+    .rating-summary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      padding: 40px;
+      background: var(--surface);
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 20px;
+      margin-bottom: 60px;
+    }
+
+    .big-rating {
+      text-align: center;
+    }
+
+    .big-rating .num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 72px;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .big-rating .label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    .rating-divider {
+      width: 1px;
+      height: 80px;
+      background: rgba(201,168,76,0.15);
+    }
+
+    .rating-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      max-width: 300px;
+    }
+
+    .rbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .rbar-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(201,168,76,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .rbar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 3px;
+      width: 0;
+      transition: width 1s ease;
+    }
+
+    .big-stars { font-size: 28px; display: flex; gap: 4px; justify-content: center; margin: 6px 0; }
+
+    /* ── Write Review ── */
+    .write-review {
+      background: var(--surface);
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 24px;
+      padding: 48px;
+      margin-bottom: 60px;
+    }
+
+    .write-review h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+
+    .write-review p {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 32px;
+    }
+
+    .star-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .star-selector .star {
+      font-size: 36px;
+      cursor: pointer;
+      color: rgba(201,168,76,0.25);
+      transition: all 0.2s;
+    }
+
+    .star-selector .star.active,
+    .star-selector .star.hovered {
+      color: var(--gold);
+      transform: scale(1.2);
+    }
+
+    .star-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+      min-height: 18px;
+    }
+
+    .review-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .success-review {
+      background: rgba(107, 203, 119, 0.1);
+      border: 1px solid rgba(107, 203, 119, 0.3);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: none;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .success-review.show { display: flex; animation: fadeIn 0.4s ease; }
+
+    /* ── Reviews Wall ── */
+    .reviews-section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 36px;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .review-card {
+      background: var(--surface);
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 20px;
+      padding: 28px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .review-card::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 120px;
+      color: rgba(201,168,76,0.06);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .review-card:hover {
+      border-color: rgba(201,168,76,0.25);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+
+    .review-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 16px;
+    }
+
+    .review-stars span { color: var(--gold); font-size: 16px; }
+
+    .review-text {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .reviewer {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .reviewer-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--dark);
+      font-family: 'Josefin Sans', sans-serif;
+      flex-shrink: 0;
+    }
+
+    .reviewer-info strong {
+      display: block;
+      color: var(--cream);
+      font-size: 14px;
+    }
+
+    .reviewer-info span {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .reviews-loading {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 1024px) {
+      .feedback-page { padding: 60px 40px; }
+      .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+      .review-form-row { grid-template-columns: 1fr; }
+      .rating-summary { flex-wrap: wrap; gap: 20px; }
+    }
+
+    @media (max-width: 640px) {
+      .feedback-page { padding: 40px 20px; }
+      .reviews-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="feedback-page">
+
+      <!-- HEADER -->
+      <div class="feedback-header">
+        <span class="eyebrow">Customer Stories</span>
+        <h1>What Our Guests <em>Say</em></h1>
+      </div>
+
+      <!-- RATING SUMMARY -->
+      <div class="rating-summary fade-up" id="ratingSummary">
+        <div class="big-rating">
+          <div class="num" id="avgRating">5.0</div>
+          <div class="big-stars" id="avgStars">⭐⭐⭐⭐⭐</div>
+          <div class="label" id="totalReviews">Loading...</div>
+        </div>
+        <div class="rating-divider"></div>
+        <div class="rating-bars" id="ratingBars">
+          <!-- generated by JS -->
+        </div>
+      </div>
+
+      <!-- WRITE REVIEW FORM -->
+      <div class="write-review fade-up" data-delay="150">
+        <h2>Share Your Experience</h2>
+        <p>Tell the world about your Sweet Scoops moment</p>
+
+        <div class="success-review" id="successReview">
+          <span style="font-size:24px">🌟</span>
+          <p style="color:#6bcb77;font-size:13px">Thank you! Your review has been published.</p>
+        </div>
+
+        <div class="form-group">
+          <label>Your Rating</label>
+          <div class="star-selector" id="starSelector">
+            <span class="star" data-val="1">★</span>
+            <span class="star" data-val="2">★</span>
+            <span class="star" data-val="3">★</span>
+            <span class="star" data-val="4">★</span>
+            <span class="star" data-val="5">★</span>
+          </div>
+          <div class="star-label" id="starLabel">Click to rate</div>
+        </div>
+
+        <div class="review-form-row">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="rName" placeholder="Your Name">
+          </div>
+          <div class="form-group">
+            <label>Favourite Flavour</label>
+            <input type="text" id="rFlavor" placeholder="e.g. Mango Saffron Royale">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Your Review</label>
+          <textarea id="rMessage" placeholder="Tell us about your Sweet Scoops experience..." style="min-height:120px"></textarea>
+        </div>
+
+        <button class="btn-gold" style="padding:15px 40px" onclick="submitReview()">
+          Publish Review ✨
+        </button>
+      </div>
+
+      <!-- REVIEWS WALL -->
+      <div class="reviews-section fade-up" data-delay="300">
+        <h2>Guest Reviews</h2>
+        <div class="reviews-grid" id="reviewsGrid">
+          <div class="reviews-loading">Loading reviews...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer style="text-align:center;padding:40px;color:var(--text-dim);font-size:12px;letter-spacing:2px;border-top:1px solid rgba(201,168,76,0.1);margin-top:60px">
+    © 2026 Sweet Scoops — Crafted with Love in Bhopal
+  </footer>
+
+  <script src="/js/navbar.js"></script>
+  <script>
+    initNavbar('feedback');
+
+    let selectedRating = 0;
+    const starLabels = ['', 'Poor', 'Below Average', 'Good', 'Great', 'Excellent! 🌟'];
+
+    // Star selector
+    const stars = document.querySelectorAll('#starSelector .star');
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        selectedRating = parseInt(star.dataset.val);
+        highlightStars(selectedRating);
+        document.getElementById('starLabel').textContent = starLabels[selectedRating];
+      });
+
+      star.addEventListener('mouseenter', () => highlightStars(parseInt(star.dataset.val), true));
+      star.addEventListener('mouseleave', () => highlightStars(selectedRating));
+    });
+
+    function highlightStars(val, hover = false) {
+      stars.forEach((s, i) => {
+        s.classList.remove('active', 'hovered');
+        if (i < val) s.classList.add(hover ? 'hovered' : 'active');
+      });
+    }
+
+    async function submitReview() {
+      const name = document.getElementById('rName').value.trim();
+      const flavor = document.getElementById('rFlavor').value.trim();
+      let message = document.getElementById('rMessage').value.trim();
+
+      if (!name || !message || selectedRating === 0) {
+        showToast('⚠️', 'Missing Fields', 'Please fill in name, rating, and review.');
+        return;
+      }
+
+      if (flavor) message = `[Favourite: ${flavor}] ` + message;
+
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, rating: selectedRating, message })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('successReview').classList.add('show');
+        document.getElementById('rName').value = '';
+        document.getElementById('rFlavor').value = '';
+        document.getElementById('rMessage').value = '';
+        selectedRating = 0;
+        highlightStars(0);
+        document.getElementById('starLabel').textContent = 'Click to rate';
+        showToast('🌟', 'Review Published!', 'Thank you for your feedback.');
+        await loadReviews();
+      } else {
+        showToast('❌', 'Failed', 'Please try again.');
+      }
+    }
+
+    async function loadReviews() {
+      const res = await fetch('/api/feedback');
+      const data = await res.json();
+      const reviews = data.feedback || [];
+
+      // Rating summary
+      if (reviews.length > 0) {
+        const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
+        document.getElementById('avgRating').textContent = avg;
+        document.getElementById('totalReviews').textContent = reviews.length + ' reviews';
+
+        const gold = '⭐';
+        document.getElementById('avgStars').textContent = gold.repeat(Math.round(avg));
+
+        // Rating bars
+        const counts = [0, 0, 0, 0, 0, 0]; // index 1-5
+        reviews.forEach(r => counts[r.rating]++);
+        const maxCount = Math.max(...counts.slice(1));
+
+        document.getElementById('ratingBars').innerHTML = [5, 4, 3, 2, 1].map(star => `
+          <div class="rbar">
+            <span style="color:var(--gold);font-size:14px">${'★'.repeat(star)}</span>
+            <div class="rbar-track">
+              <div class="rbar-fill" style="width:${maxCount ? (counts[star] / maxCount) * 100 : 0}%"></div>
+            </div>
+            <span style="min-width:20px;text-align:right">${counts[star]}</span>
+          </div>
+        `).join('');
+      }
+
+      // Review cards
+      if (reviews.length === 0) {
+        document.getElementById('reviewsGrid').innerHTML = '<p style="color:var(--text-dim)">No reviews yet. Be the first!</p>';
+        return;
+      }
+
+      document.getElementById('reviewsGrid').innerHTML = reviews.map((r, i) => `
+        <div class="review-card fade-up" data-delay="${i * 80}" style="opacity:0">
+          <div class="review-stars">
+            ${'<span>★</span>'.repeat(r.rating)}${'<span style="color:rgba(201,168,76,0.2)">★</span>'.repeat(5 - r.rating)}
+          </div>
+          <p class="review-text">"${r.message}"</p>
+          <div class="reviewer">
+            <div class="reviewer-avatar">${r.name.charAt(0).toUpperCase()}</div>
+            <div class="reviewer-info">
+              <strong>${r.name}</strong>
+              <span>Verified Customer</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Re-trigger animations for new cards
+      setTimeout(() => {
+        document.querySelectorAll('.review-card').forEach((el, i) => {
+          setTimeout(() => el.classList.add('visible'), i * 80);
+        });
+      }, 50);
+    }
+
+    loadReviews();
+  </script>
+</body>
+</html>

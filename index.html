@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sweet Scoops — Luxury Ice Cream</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #fdf8f0;
+    --deep: #1a0a00;
+    --rose: #7a2e3b;
+    --warm: #2d1a0e;
+    --text-muted: #8a7560;
+    --card-bg: rgba(255,255,255,0.03);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--deep);
+    color: var(--cream);
+    overflow-x: hidden;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    transition: transform 0.15s, opacity 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-dot {
+    width: 5px; height: 5px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: 0.05s;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 24px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(15, 5, 0, 0.92);
+    backdrop-filter: blur(20px);
+    padding: 16px 80px;
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+  .nav-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--gold), var(--rose));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .nav-brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 400;
+    transition: 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .nav-avatar {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--gold), var(--rose));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--deep);
+  }
+  .nav-greeting {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+  .nav-greeting span { color: var(--gold-light); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 80px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 65% 50%, #3a1a00 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 20%, #4a1020 0%, transparent 45%),
+                #0f0500;
+  }
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.25;
+    animation: heroOrb 10s ease-in-out infinite;
+  }
+  .hero-orb1 { width: 600px; height: 600px; background: #c9a84c; top: -200px; right: -100px; }
+  .hero-orb2 { width: 400px; height: 400px; background: #7a2e3b; bottom: -100px; left: 10%; animation-delay: -5s; }
+
+  @keyframes heroOrb {
+    0%, 100% { transform: scale(1) translate(0,0); }
+    50% { transform: scale(1.15) translate(30px, -20px); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 600px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 30px;
+    padding: 8px 20px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 30px;
+    animation: fadeUp 1s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 7vw, 90px);
+    font-weight: 300;
+    line-height: 1.0;
+    color: var(--cream);
+    margin-bottom: 24px;
+    animation: fadeUp 1s 0.15s ease both;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold-light);
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    max-width: 440px;
+    animation: fadeUp 1s 0.3s ease both;
+    margin-bottom: 40px;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 1s 0.45s ease both;
+  }
+
+  .btn-primary {
+    padding: 16px 36px;
+    background: linear-gradient(135deg, var(--gold), #a87a30);
+    color: var(--deep);
+    border: none;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 50px rgba(201,168,76,0.4);
+  }
+
+  .btn-outline {
+    padding: 16px 36px;
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s;
+  }
+  .btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-3px);
+  }
+
+  /* Hero image collage */
+  .hero-visuals {
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 500px;
+    height: 560px;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+  .hero-img-main {
+    position: absolute;
+    width: 320px; height: 380px;
+    border-radius: 30px;
+    object-fit: cover;
+    right: 80px; top: 0;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    animation: floatImg 6s ease-in-out infinite;
+  }
+  .hero-img-sm1 {
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 24px;
+    object-fit: cover;
+    left: 0; bottom: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    animation: floatImg 6s 2s ease-in-out infinite;
+  }
+  .hero-img-sm2 {
+    position: absolute;
+    width: 140px; height: 140px;
+    border-radius: 20px;
+    object-fit: cover;
+    left: 60px; top: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    animation: floatImg 6s 4s ease-in-out infinite;
+  }
+  .hero-pill {
+    position: absolute;
+    bottom: 10px;
+    right: 60px;
+    background: linear-gradient(135deg, var(--gold), #a87a30);
+    color: var(--deep);
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 40px rgba(201,168,76,0.4);
+    animation: floatImg 6s 1s ease-in-out infinite;
+  }
+
+  @keyframes floatImg {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap {
+    overflow: hidden;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    padding: 20px 0;
+    background: rgba(201,168,76,0.04);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 60px;
+    animation: marquee 20s linear infinite;
+    width: max-content;
+  }
+  .marquee-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .marquee-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 120px 80px; position: relative; }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--gold);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  /* ── ABOUT SECTION ── */
+  .about-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-images {
+    position: relative;
+    height: 500px;
+  }
+  .about-img1 {
+    position: absolute;
+    width: 300px; height: 380px;
+    border-radius: 30px;
+    object-fit: cover;
+    top: 0; left: 0;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+  }
+  .about-img2 {
+    position: absolute;
+    width: 220px; height: 260px;
+    border-radius: 24px;
+    object-fit: cover;
+    bottom: 0; right: 20px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    border: 4px solid rgba(201,168,76,0.2);
+  }
+  .about-badge {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: linear-gradient(135deg, var(--gold), #a87a30);
+    color: var(--deep);
+    padding: 16px 22px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.4;
+    box-shadow: 0 10px 40px rgba(201,168,76,0.4);
+  }
+  .about-badge strong { display: block; font-size: 24px; font-family: 'Cormorant Garamond', serif; }
+
+  .about-text .desc {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.9;
+    margin-bottom: 20px;
+  }
+
+  .about-pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .pillar {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    transition: 0.3s;
+  }
+  .pillar:hover {
+    border-color: rgba(201,168,76,0.3);
+    background: rgba(201,168,76,0.04);
+    transform: translateY(-4px);
+  }
+  .pillar-icon { font-size: 28px; margin-bottom: 10px; }
+  .pillar h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 6px;
+    color: var(--cream);
+  }
+  .pillar p { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ── FEATURED FLAVOURS ── */
+  .flavours-section { background: rgba(255,255,255,0.01); }
+
+  .flavours-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 60px;
+  }
+
+  .flavour-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .flavour-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.08);
+    border-radius: 28px;
+    overflow: hidden;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    cursor: pointer;
+  }
+  .flavour-card:hover {
+    transform: translateY(-12px);
+    border-color: rgba(201,168,76,0.25);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.3), 0 0 40px rgba(201,168,76,0.1);
+  }
+  .flavour-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15,5,0,0.9) 0%, transparent 60%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .flavour-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    transition: transform 0.6s;
+  }
+  .flavour-card:hover img { transform: scale(1.08); }
+
+  .flavour-card-body {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 3;
+    padding: 24px;
+  }
+  .flavour-tag {
+    background: rgba(201,168,76,0.15);
+    color: var(--gold-light);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 10px;
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+  .flavour-card-body h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .flavour-card-body p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .flavour-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .flavour-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--gold-light);
+  }
+  .flavour-order-btn {
+    background: linear-gradient(135deg, var(--gold), #a87a30);
+    color: var(--deep);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .flavour-order-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(201,168,76,0.4); }
+
+  /* ── EXPERIENCE SECTION ── */
+  .experience-section {
+    background: linear-gradient(135deg, rgba(201,168,76,0.04), rgba(122,46,59,0.04));
+  }
+
+  .experience-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .exp-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(201,168,76,0.08);
+    padding: 40px 30px;
+    text-align: center;
+    transition: 0.3s;
+    cursor: default;
+  }
+  .exp-item:hover {
+    background: rgba(201,168,76,0.06);
+    border-color: rgba(201,168,76,0.2);
+  }
+  .exp-icon { font-size: 40px; margin-bottom: 20px; display: block; }
+  .exp-item h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 10px;
+  }
+  .exp-item p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+  .testimonial-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.08);
+    border-radius: 24px;
+    padding: 32px;
+    transition: 0.3s;
+    position: relative;
+  }
+  .testimonial-card::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 100px;
+    color: rgba(201,168,76,0.08);
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    line-height: 1;
+  }
+  .testimonial-card:hover { transform: translateY(-6px); border-color: rgba(201,168,76,0.2); }
+  .stars { color: var(--gold); font-size: 14px; margin-bottom: 16px; letter-spacing: 2px; }
+  .testimonial-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .author-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--rose));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--deep);
+  }
+  .author-info h4 { font-size: 14px; font-weight: 500; color: var(--cream); }
+  .author-info p { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-top: 2px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding: 60px 80px 30px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 50px;
+  }
+  .footer-brand h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    margin-bottom: 16px;
+    color: var(--cream);
+  }
+  .footer-brand p { font-size: 13px; color: var(--text-muted); line-height: 1.8; max-width: 260px; }
+  .footer-col h4 {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .footer-col a, .footer-col p {
+    display: block;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: 0.2s;
+    line-height: 1.6;
+  }
+  .footer-col a:hover { color: var(--cream); }
+  .footer-bottom {
+    border-top: 1px solid rgba(201,168,76,0.08);
+    padding-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .footer-bottom span { color: var(--gold); }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-up-d1 { transition-delay: 0.1s; }
+  .fade-up-d2 { transition-delay: 0.2s; }
+  .fade-up-d3 { transition-delay: 0.3s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, var(--gold), #a87a30);
+    color: var(--deep);
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: 0.4s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Mobile menu */
+  .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+  .hamburger span { width: 24px; height: 1.5px; background: var(--cream); transition: 0.3s; }
+
+  @media (max-width: 1100px) {
+    nav { padding: 20px 40px; }
+    .hero { padding: 120px 40px 80px; }
+    .hero-visuals { display: none; }
+    .about-section { grid-template-columns: 1fr; }
+    .about-images { height: 280px; }
+    .flavour-cards { grid-template-columns: repeat(2, 1fr); }
+    .experience-grid { grid-template-columns: repeat(2, 1fr); }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    section { padding: 80px 40px; }
+  }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .flavour-cards { grid-template-columns: 1fr; }
+    .hero-title { font-size: 44px; }
+    footer { padding: 40px 20px 20px; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-icon">🍦</div>
+    <span class="nav-brand-name">Sweet Scoops</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="menu.html">Menu</a>
+    <a href="contact.html">Contact</a>
+    <a href="feedback.html">Feedback</a>
+  </div>
+  <div class="nav-user" id="navUser">
+    <div class="nav-avatar" id="navAvatar">?</div>
+    <div class="nav-greeting">Hello, <span id="navName">Guest</span></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb1"></div>
+    <div class="hero-orb hero-orb2"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">⭐ India's Most Loved Artisan Ice Cream</div>
+    <h1 class="hero-title">
+      Handcrafted<br>
+      <em>Luxury</em>
+      Ice Cream
+    </h1>
+    <p class="hero-desc">
+      Each scoop is a masterpiece — crafted with hand-picked ingredients, 
+      time-honoured recipes and an obsession with perfection. Taste the extraordinary.
+    </p>
+    <div class="hero-btns">
+      <a href="menu.html" class="btn-primary">Explore Our Menu</a>
+      <a href="#about" class="btn-outline">Our Story</a>
+    </div>
+  </div>
+
+  <div class="hero-visuals">
+    <img class="hero-img-main" src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80" alt="Luxury Ice Cream" onerror="this.style.background='linear-gradient(135deg,#c9a84c,#7a2e3b)';this.removeAttribute('src')">
+    <img class="hero-img-sm1" src="https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400&q=80" alt="Strawberry Scoop" onerror="this.style.background='linear-gradient(135deg,#ff6b9d,#c44dff)';this.removeAttribute('src')">
+    <img class="hero-img-sm2" src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=400&q=80" alt="Mango Scoop" onerror="this.style.background='linear-gradient(135deg,#ffd700,#ff8c00)';this.removeAttribute('src')">
+    <div class="hero-pill">🏆 Best in Bhopal 2025</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="marquee-dot"></span>Premium Ingredients</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>24+ Artisan Flavours</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Fresh Daily</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>No Artificial Colours</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Award Winning Recipes</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>50,000+ Happy Customers</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Handcrafted with Love</div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item"><span class="marquee-dot"></span>Premium Ingredients</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>24+ Artisan Flavours</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Fresh Daily</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>No Artificial Colours</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Award Winning Recipes</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>50,000+ Happy Customers</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Handcrafted with Love</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-section">
+    <div class="about-images fade-up">
+      <img class="about-img1" src="https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80" alt="Making Ice Cream" onerror="this.style.background='linear-gradient(135deg,#3a1a00,#7a2e3b)';this.removeAttribute('src')">
+      <img class="about-img2" src="https://images.unsplash.com/photo-1488900128323-21503983a07e?w=400&q=80" alt="Ingredients" onerror="this.style.background='linear-gradient(135deg,#c9a84c,#a87a30)';this.removeAttribute('src')">
+      <div class="about-badge">
+        <strong>5+</strong>
+        Years of<br>Excellence
+      </div>
+    </div>
+    <div class="about-text">
+      <div class="section-label fade-up">Our Story</div>
+      <h2 class="section-title fade-up">Born from a <em style="font-style:italic;color:var(--gold-light)">Passion</em> for Perfection</h2>
+      <p class="desc fade-up fade-up-d1">
+        Sweet Scoops was born in 2020 from a single dream — to create ice cream that wasn't just a dessert, but a moment of pure joy. Our founder, inspired by family recipes and global flavours, set out to craft something extraordinary for the people of Bhopal.
+      </p>
+      <p class="desc fade-up fade-up-d2">
+        Every flavour we create begins with the finest ingredients — hand-selected mangoes from Alphonso orchards, single-origin Belgian chocolate, farm-fresh cream, and spices sourced directly from Kerala. We never compromise.
+      </p>
+      <div class="about-pillars fade-up fade-up-d3">
+        <div class="pillar">
+          <div class="pillar-icon">🥭</div>
+          <h4>Farm to Scoop</h4>
+          <p>Ingredients sourced directly from the finest farms across India.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">👨‍🍳</div>
+          <h4>Master Crafted</h4>
+          <p>Every batch made fresh with care by trained artisan chefs.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🌿</div>
+          <h4>Natural Always</h4>
+          <p>No artificial colours, flavours or preservatives. Ever.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">✨</div>
+          <h4>Luxury Experience</h4>
+          <p>From packaging to the last lick — crafted to delight.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED FLAVOURS -->
+<section class="flavours-section fade-up" id="featured">
+  <div class="flavours-header">
+    <div>
+      <div class="section-label">Our Signatures</div>
+      <h2 class="section-title">Featured <em style="font-style:italic;color:var(--gold-light)">Flavours</em></h2>
+    </div>
+    <a href="menu.html" class="btn-outline" style="font-size:11px;padding:12px 28px;">View Full Menu →</a>
+  </div>
+
+  <div class="flavour-cards">
+    <div class="flavour-card fade-up">
+      <img src="https://images.unsplash.com/photo-1560008581-09826d1de69e?w=600&q=80" alt="Belgian Chocolate" onerror="this.src='https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?w=600&q=80'">
+      <div class="flavour-card-body">
+        <span class="flavour-tag">Bestseller</span>
+        <h3>Belgian Dark Chocolate</h3>
+        <p>Rich, velvety single-origin chocolate with a hint of sea salt</p>
+        <div class="flavour-footer">
+          <span class="flavour-price">₹160</span>
+          <button class="flavour-order-btn" onclick="addToCart('Belgian Dark Chocolate', 160)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flavour-card fade-up fade-up-d1">
+      <img src="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600&q=80" alt="Mango Saffron" onerror="this.src='https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&q=80'">
+      <div class="flavour-card-body">
+        <span class="flavour-tag">Seasonal</span>
+        <h3>Mango Saffron Kulfi</h3>
+        <p>Alphonso mangoes with premium Kashmiri saffron threads</p>
+        <div class="flavour-footer">
+          <span class="flavour-price">₹180</span>
+          <button class="flavour-order-btn" onclick="addToCart('Mango Saffron Kulfi', 180)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flavour-card fade-up fade-up-d2">
+      <img src="https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=600&q=80" alt="Rose Pistachio" onerror="this.src='https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&q=80'">
+      <div class="flavour-card-body">
+        <span class="flavour-tag">Signature</span>
+        <h3>Rose & Pistachio</h3>
+        <p>Delicate rose water with crunchy Iranian pistachios</p>
+        <div class="flavour-footer">
+          <span class="flavour-price">₹170</span>
+          <button class="flavour-order-btn" onclick="addToCart('Rose & Pistachio', 170)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="experience-section fade-up">
+  <div class="section-label">Why Choose Us</div>
+  <h2 class="section-title">The Sweet Scoops <em style="font-style:italic;color:var(--gold-light)">Experience</em></h2>
+  <div class="experience-grid">
+    <div class="exp-item fade-up">
+      <span class="exp-icon">🌱</span>
+      <h3>100% Natural</h3>
+      <p>We use only the finest natural ingredients — no artificial colours, flavours or preservatives in any of our creations.</p>
+    </div>
+    <div class="exp-item fade-up fade-up-d1">
+      <span class="exp-icon">🎨</span>
+      <h3>Artisan Crafted</h3>
+      <p>Each batch is handcrafted in small quantities by our expert chocolatiers and ice cream artisans.</p>
+    </div>
+    <div class="exp-item fade-up fade-up-d2">
+      <span class="exp-icon">🚚</span>
+      <h3>Fresh Delivery</h3>
+      <p>Orders prepared fresh and delivered in premium insulated packaging to preserve that perfect texture.</p>
+    </div>
+    <div class="exp-item fade-up fade-up-d3">
+      <span class="exp-icon">👑</span>
+      <h3>Luxury Packaging</h3>
+      <p>Presented in elegant gold-accented packaging — perfect for gifting or treating yourself royally.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="fade-up" id="reviews">
+  <div class="section-label">What People Say</div>
+  <h2 class="section-title">Loved by Ice Cream <em style="font-style:italic;color:var(--gold-light)">Connoisseurs</em></h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card fade-up">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">The Mango Saffron Kulfi is absolutely divine. I have never tasted anything like it — the saffron is so delicate yet present. This is luxury ice cream at its finest.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">P</div>
+        <div class="author-info">
+          <h4>Priya Sharma</h4>
+          <p>Food Blogger, Bhopal</p>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-up fade-up-d1">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">Ordered for my daughter's birthday and every guest asked where we got it from. The Belgian Chocolate flavour had people going back for thirds. Absolutely phenomenal!</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">R</div>
+        <div class="author-info">
+          <h4>Rahul Mehta</h4>
+          <p>Regular Customer</p>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-up fade-up-d2">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">Sweet Scoops has ruined all other ice cream for me. The Rose & Pistachio is poetry in a cup. The packaging is so luxurious — it feels like opening a gift every time.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">A</div>
+        <div class="author-info">
+          <h4>Ananya Joshi</h4>
+          <p>Chef & Restaurateur</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h2>🍦 Sweet Scoops</h2>
+      <p>Crafting moments of pure joy, one scoop at a time. Handmade with love in Bhopal since 2020.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="index.html">Home</a>
+      <a href="menu.html">Our Menu</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="feedback.html">Feedback</a>
+    </div>
+    <div class="footer-col">
+      <h4>Our Flavours</h4>
+      <a href="menu.html">Belgian Chocolate</a>
+      <a href="menu.html">Mango Saffron</a>
+      <a href="menu.html">Rose Pistachio</a>
+      <a href="menu.html">All Flavours →</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p>📍 MG Road, Bhopal, MP</p>
+      <p>📞 +91 98765 43210</p>
+      <p>✉️ hello@sweetscoops.in</p>
+      <p>🕐 10am – 10pm Daily</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 <span>Sweet Scoops</span>. All rights reserved.</div>
+    <div>Made with ❤️ in Bhopal</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── AUTH CHECK ──
+  (function(){
+    const session = localStorage.getItem('ss_session');
+    if (!session) { window.location.href = 'login.html'; return; }
+    const user = JSON.parse(session);
+    document.getElementById('navName').textContent = user.name.split(' ')[0];
+    document.getElementById('navAvatar').textContent = user.name[0].toUpperCase();
+  })();
+
+  // ── LOGOUT ──
+  document.getElementById('navUser').addEventListener('click', () => {
+    if (confirm('Sign out of Sweet Scoops?')) {
+      localStorage.removeItem('ss_session');
+      window.location.href = 'login.html';
+    }
+  });
+
+  // ── NAVBAR SCROLL ──
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ── CUSTOM CURSOR ──
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursorDot');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    dot.style.left = e.clientX + 'px';
+    dot.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a,button,.flavour-card,.pillar').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%,-50%) scale(2)');
+    el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%,-50%) scale(1)');
+  });
+
+  // ── SCROLL ANIMATION ──
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // ── CART ──
+  function addToCart(name, price) {
+    let cart = JSON.parse(localStorage.getItem('ss_cart') || '[]');
+    const existing = cart.find(i => i.name === name);
+    if (existing) existing.qty++;
+    else cart.push({ name, price, qty: 1 });
+    localStorage.setItem('ss_cart', JSON.stringify(cart));
+    showToast('🍦 ' + name + ' added to cart!');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>

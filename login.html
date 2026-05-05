@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sweet Scoops — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #fdf8f0;
+    --deep: #1a0a00;
+    --rose: #7a2e3b;
+    --text-muted: #8a7560;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--deep);
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* Animated background */
+  .bg-art {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(ellipse at 20% 50%, #3a1a00 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, #4a1020 0%, transparent 40%),
+                radial-gradient(ellipse at 60% 80%, #1a0a30 0%, transparent 45%),
+                #0f0500;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: drift 8s ease-in-out infinite;
+    opacity: 0.3;
+  }
+  .orb1 { width: 400px; height: 400px; background: #c9a84c; top: -100px; left: -100px; animation-delay: 0s; }
+  .orb2 { width: 300px; height: 300px; background: #7a2e3b; bottom: -80px; right: 10%; animation-delay: -3s; }
+  .orb3 { width: 200px; height: 200px; background: #c9a84c; top: 50%; right: -50px; animation-delay: -5s; }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -30px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.95); }
+  }
+
+  /* Floating ice cream blobs */
+  .float-bg {
+    position: fixed;
+    font-size: 80px;
+    opacity: 0.04;
+    pointer-events: none;
+    animation: floatbg 10s ease-in-out infinite;
+  }
+  .float-bg:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; font-size: 120px; }
+  .float-bg:nth-child(2) { top: 60%; left: 80%; animation-delay: -4s; font-size: 90px; }
+  .float-bg:nth-child(3) { top: 30%; left: 70%; animation-delay: -7s; }
+  .float-bg:nth-child(4) { bottom: 10%; left: 30%; animation-delay: -2s; font-size: 100px; }
+
+  @keyframes floatbg {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+  }
+
+  /* Layout */
+  .page-wrap {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  /* Left Panel */
+  .left-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px;
+    border-right: 1px solid rgba(201, 168, 76, 0.15);
+    position: relative;
+  }
+
+  .brand-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: fadeUp 1s ease both;
+  }
+
+  .logo-icon {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, var(--gold), var(--rose));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    box-shadow: 0 0 60px rgba(201,168,76,0.4);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 40px rgba(201,168,76,0.3); }
+    50% { box-shadow: 0 0 80px rgba(201,168,76,0.6), 0 0 120px rgba(201,168,76,0.2); }
+  }
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  .brand-tagline {
+    font-size: 12px;
+    letter-spacing: 6px;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  .brand-story {
+    margin-top: 60px;
+    max-width: 380px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.9;
+    font-style: italic;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+
+  .brand-story strong {
+    color: var(--gold-light);
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .divider-gold {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 30px auto;
+  }
+
+  .awards {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+    animation: fadeUp 1s 0.6s ease both;
+  }
+
+  .award-item {
+    text-align: center;
+    color: var(--text-muted);
+  }
+  .award-item span {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    color: var(--gold);
+    font-weight: 300;
+  }
+  .award-item p {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Right Panel */
+  .right-panel {
+    width: 480px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 50px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .login-card {
+    animation: fadeUp 1s 0.2s ease both;
+  }
+
+  .login-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 6px;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 36px;
+    border: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 9px;
+    transition: 0.3s;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--gold), #a87a30);
+    color: var(--deep);
+    font-weight: 500;
+  }
+
+  /* Form */
+  .form-group {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .form-group input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: 0.3s;
+    outline: none;
+  }
+
+  .form-group input::placeholder { color: rgba(255,255,255,0.2); }
+  .form-group input:focus {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.06);
+    box-shadow: 0 0 20px rgba(201,168,76,0.1);
+  }
+
+  .form-group .input-icon {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    color: var(--text-muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  .error-msg {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: -12px;
+    margin-bottom: 16px;
+    padding-left: 4px;
+    display: none;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--gold) 0%, #a87a30 50%, var(--rose) 100%);
+    background-size: 200% 200%;
+    border: none;
+    border-radius: 12px;
+    color: var(--deep);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.4s;
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .submit-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: 0.5s;
+  }
+
+  .submit-btn:hover {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(201,168,76,0.4);
+  }
+
+  .submit-btn:hover::after { transform: translateX(100%); }
+
+  .guest-link {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .guest-link a {
+    color: var(--gold-light);
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+
+  .guest-link a:hover { color: var(--gold); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Form panel toggle */
+  #register-form { display: none; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, var(--gold), #a87a30);
+    color: var(--deep);
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 9999;
+    transform: translateX(200%);
+    transition: 0.4s cubic-bezier(.175,.885,.32,1.275);
+    box-shadow: 0 10px 40px rgba(201,168,76,0.4);
+  }
+  .toast.show { transform: translateX(0); }
+
+  @media (max-width: 900px) {
+    .left-panel { display: none; }
+    .right-panel { width: 100%; padding: 40px 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-art">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="float-bg">🍦</div>
+<div class="float-bg">🍨</div>
+<div class="float-bg">🍧</div>
+<div class="float-bg">🍡</div>
+
+<div class="page-wrap">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="brand-logo">
+      <div class="logo-icon">🍦</div>
+      <div class="brand-name">Sweet Scoops</div>
+      <div class="brand-tagline">Artisan Ice Cream Since 2020</div>
+    </div>
+
+    <div class="divider-gold"></div>
+
+    <p class="brand-story">
+      Born from a <strong>passion for perfection</strong>, Sweet Scoops crafts each flavour 
+      with hand-selected ingredients and love. Every scoop is a journey — 
+      from the <strong>lush mango orchards</strong> of Rajasthan to the 
+      <strong>velvety Belgian chocolate</strong> from the finest cacao houses.
+      <br><br>
+      This is not just ice cream. This is <strong>an experience.</strong>
+    </p>
+
+    <div class="divider-gold"></div>
+
+    <div class="awards">
+      <div class="award-item">
+        <span>24+</span>
+        <p>Flavours</p>
+      </div>
+      <div class="award-item">
+        <span>4.9★</span>
+        <p>Rating</p>
+      </div>
+      <div class="award-item">
+        <span>50K+</span>
+        <p>Happy Customers</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="login-card">
+      <div class="login-heading">Welcome Back</div>
+      <div class="login-sub">Sign in to your account</div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+        <button class="tab-btn" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="login-form">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="login-email" placeholder="you@example.com">
+          <span class="input-icon">✉</span>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-pass" placeholder="••••••••">
+          <span class="input-icon">🔒</span>
+        </div>
+        <div class="error-msg" id="login-error">Invalid email or password</div>
+        <button class="submit-btn" onclick="doLogin()">Enter Sweet Scoops</button>
+        <div class="guest-link">
+          New here? <a href="#" onclick="switchTab('register')">Create an account →</a>
+        </div>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="register-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="Your Name">
+          <span class="input-icon">👤</span>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="reg-email" placeholder="you@example.com">
+          <span class="input-icon">✉</span>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="reg-pass" placeholder="Min 6 characters">
+          <span class="input-icon">🔒</span>
+        </div>
+        <div class="error-msg" id="reg-error">Please fill all fields correctly</div>
+        <button class="submit-btn" onclick="doRegister()">Create Account</button>
+        <div class="guest-link">
+          Already have an account? <a href="#" onclick="switchTab('login')">Sign in →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ─── DATABASE (localStorage) ───
+  function getUsers() {
+    return JSON.parse(localStorage.getItem('ss_users') || '[]');
+  }
+  function saveUsers(u) {
+    localStorage.setItem('ss_users', JSON.stringify(u));
+  }
+  function setSession(user) {
+    localStorage.setItem('ss_session', JSON.stringify(user));
+  }
+  function checkSession() {
+    const s = localStorage.getItem('ss_session');
+    if (s) window.location.href = 'index.html';
+  }
+
+  checkSession();
+
+  // ─── TABS ───
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => {
+      b.classList.toggle('active', (tab==='login' && i===0)||(tab==='register' && i===1));
+    });
+    document.getElementById('login-form').style.display = tab==='login' ? 'block' : 'none';
+    document.getElementById('register-form').style.display = tab==='register' ? 'block' : 'none';
+  }
+
+  // ─── LOGIN ───
+  function doLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    const errEl = document.getElementById('login-error');
+    errEl.style.display = 'none';
+
+    const users = getUsers();
+    const user = users.find(u => u.email === email && u.password === pass);
+    if (!user) { errEl.style.display = 'block'; return; }
+
+    setSession(user);
+    showToast('Welcome back, ' + user.name + '! 🍦');
+    setTimeout(() => window.location.href = 'index.html', 1200);
+  }
+
+  // ─── REGISTER ───
+  function doRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    const errEl = document.getElementById('reg-error');
+    errEl.style.display = 'none';
+
+    if (!name || !email || pass.length < 6) { 
+      errEl.textContent = 'Please fill all fields (password min 6 chars)';
+      errEl.style.display = 'block'; return; 
+    }
+
+    const users = getUsers();
+    if (users.find(u => u.email === email)) { 
+      errEl.textContent = 'Email already registered!';
+      errEl.style.display = 'block'; return; 
+    }
+
+    users.push({ name, email, password: pass, joined: new Date().toISOString() });
+    saveUsers(users);
+    setSession({ name, email });
+    showToast('Account created! Welcome to Sweet Scoops 🍦');
+    setTimeout(() => window.location.href = 'index.html', 1200);
+  }
+
+  // ─── TOAST ───
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // Enter key support
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (document.getElementById('login-form').style.display !== 'none') doLogin();
+      else doRegister();
+    }
+  });
+</script>
+</body>
+</html>

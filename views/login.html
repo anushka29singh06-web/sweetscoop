@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Scoops — Login</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <style>
+    body {
+      background: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* ── Animated Background ── */
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(201,168,76,0.15), transparent 70%);
+      top: -200px; right: -100px;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(212,85,122,0.1), transparent 70%);
+      bottom: -150px; left: -100px;
+      animation-delay: -3s;
+    }
+
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(201,168,76,0.1), transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -6s;
+    }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-30px) scale(1.05); }
+    }
+
+    /* ── Auth Container ── */
+    .auth-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: min(900px, 95vw);
+      min-height: 560px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(201,168,76,0.15);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+      animation: fadeUp 0.8s ease forwards;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Left Panel ── */
+    .auth-visual {
+      position: relative;
+      background: linear-gradient(160deg, #1a1408, #0d0b08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 40px;
+      text-align: center;
+    }
+
+    .auth-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80') center/cover no-repeat;
+      opacity: 0.2;
+    }
+
+    .auth-visual-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-visual .script {
+      font-size: 64px;
+      color: var(--gold);
+      display: block;
+      line-height: 1;
+      margin-bottom: 12px;
+      text-shadow: 0 4px 20px rgba(201,168,76,0.4);
+    }
+
+    .auth-visual h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--cream);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .auth-visual p {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 240px;
+      margin: 0 auto;
+    }
+
+    .float-emojis {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .float-emojis span {
+      position: absolute;
+      font-size: 32px;
+      animation: floatEmoji 6s ease-in-out infinite;
+      opacity: 0.6;
+    }
+
+    .float-emojis span:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+    .float-emojis span:nth-child(2) { top: 70%; left: 15%; animation-delay: -2s; }
+    .float-emojis span:nth-child(3) { top: 30%; right: 10%; animation-delay: -4s; }
+    .float-emojis span:nth-child(4) { bottom: 20%; right: 15%; animation-delay: -1s; }
+
+    @keyframes floatEmoji {
+      0%, 100% { transform: translateY(0) rotate(-5deg); }
+      50%       { transform: translateY(-15px) rotate(5deg); }
+    }
+
+    /* ── Right Panel ── */
+    .auth-form-panel {
+      background: var(--surface);
+      padding: 50px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .auth-eyebrow {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .auth-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px;
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+      line-height: 1.5;
+    }
+
+    /* Tab switcher */
+    .auth-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 32px;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 12px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .auth-tab.active {
+      color: var(--gold);
+    }
+
+    .auth-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+    }
+
+    /* Forms */
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+
+    .error-msg {
+      color: #e8472a;
+      font-size: 12px;
+      margin-top: -12px;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .success-msg {
+      color: #6bcb77;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .btn-full {
+      width: 100%;
+      padding: 15px;
+      font-size: 12px;
+      letter-spacing: 4px;
+    }
+
+    .auth-divider {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 2px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 640px) {
+      .auth-container { grid-template-columns: 1fr; }
+      .auth-visual { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background orbs -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="auth-container">
+
+    <!-- Left Visual -->
+    <div class="auth-visual">
+      <div class="float-emojis">
+        <span>🍦</span>
+        <span>🍨</span>
+        <span>🍧</span>
+        <span>✨</span>
+      </div>
+      <div class="auth-visual-content">
+        <span class="script">Sweet Scoops</span>
+        <h2>Luxury Awaits</h2>
+        <div class="gold-divider"><span>❖</span></div>
+        <p>Handcrafted premium ice cream flavours made with the finest ingredients. Every scoop is a moment of pure indulgence.</p>
+      </div>
+    </div>
+
+    <!-- Right Form -->
+    <div class="auth-form-panel">
+      <div class="auth-eyebrow">Welcome Back</div>
+      <h1 class="auth-title">Sign in to continue</h1>
+      <p class="auth-subtitle">Access your luxury ice cream experience</p>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <div class="form-panel active" id="loginPanel">
+        <div id="loginError" class="error-msg" style="display:none"></div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••">
+        </div>
+        <button class="btn-gold btn-full" onclick="handleLogin()">Enter the Experience</button>
+      </div>
+
+      <!-- Signup Form -->
+      <div class="form-panel" id="signupPanel">
+        <div id="signupError" class="error-msg" style="display:none"></div>
+        <div id="signupSuccess" class="success-msg" style="display:none"></div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="Your Name">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="signupEmail" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="signupPassword" placeholder="Create a password">
+        </div>
+        <button class="btn-gold btn-full" onclick="handleSignup()">Create Account</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach((t, i) => {
+        t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'signup' && i === 1));
+      });
+      document.getElementById('loginPanel').classList.toggle('active', tab === 'login');
+      document.getElementById('signupPanel').classList.toggle('active', tab === 'signup');
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+
+      if (!email || !password) {
+        errEl.textContent = 'Please fill in all fields.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        window.location.href = '/home';
+      } else {
+        errEl.textContent = data.message || 'Login failed.';
+        errEl.style.display = 'block';
+      }
+    }
+
+    async function handleSignup() {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const errEl = document.getElementById('signupError');
+      const sucEl = document.getElementById('signupSuccess');
+      errEl.style.display = 'none';
+      sucEl.style.display = 'none';
+
+      if (!name || !email || !password) {
+        errEl.textContent = 'Please fill in all fields.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        window.location.href = '/home';
+      } else {
+        errEl.textContent = data.message || 'Signup failed.';
+        errEl.style.display = 'block';
+      }
+    }
+
+    // Enter key support
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const loginActive = document.getElementById('loginPanel').classList.contains('active');
+        if (loginActive) handleLogin(); else handleSignup();
+      }
+    });
+  </script>
+</body>
+</html>

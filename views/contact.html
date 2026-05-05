@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Scoops — Contact</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <style>
+    .contact-section {
+      min-height: calc(100vh - 90px);
+      padding: 80px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    /* ── Left Info ── */
+    .contact-info {
+      padding-top: 20px;
+    }
+
+    .contact-info .eyebrow {
+      font-size: 11px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .contact-info h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 5vw, 60px);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .contact-info h1 em { font-style: italic; color: var(--gold); }
+
+    .contact-info p {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 40px;
+      max-width: 380px;
+    }
+
+    .contact-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .contact-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: var(--surface);
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 16px;
+      padding: 20px 24px;
+      transition: all 0.3s;
+    }
+
+    .contact-card:hover {
+      border-color: rgba(201,168,76,0.3);
+      transform: translateX(8px);
+    }
+
+    .contact-card-icon {
+      font-size: 28px;
+      width: 52px;
+      height: 52px;
+      background: var(--gold-pale);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contact-card-text strong {
+      display: block;
+      color: var(--cream);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .contact-card-text span {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ── Right Form ── */
+    .contact-form-wrap {
+      background: var(--surface);
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 24px;
+      padding: 48px;
+    }
+
+    .form-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+
+    .form-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      font-size: 12px;
+      letter-spacing: 4px;
+      margin-top: 8px;
+    }
+
+    .success-banner {
+      background: rgba(107, 203, 119, 0.1);
+      border: 1px solid rgba(107, 203, 119, 0.3);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .success-banner.show { display: flex; animation: fadeIn 0.4s ease; }
+
+    .success-banner span { font-size: 24px; }
+
+    .success-banner p { font-size: 13px; color: #6bcb77; }
+
+    /* Map placeholder */
+    .map-placeholder {
+      margin-top: 40px;
+      background: var(--surface);
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 20px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .map-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=60') center/cover no-repeat;
+      opacity: 0.15;
+    }
+
+    .map-placeholder-content {
+      position: relative;
+      text-align: center;
+    }
+
+    .map-placeholder-content p {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 1024px) {
+      .contact-section {
+        grid-template-columns: 1fr;
+        padding: 60px 40px;
+        gap: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <section class="contact-section">
+
+      <!-- LEFT INFO -->
+      <div class="contact-info fade-up">
+        <div class="eyebrow">Get in Touch</div>
+        <h1>We'd Love to <em>Hear</em> from You</h1>
+        <p>Have a question, special request, or just want to tell us how much you love our ice cream? We're always here.</p>
+
+        <div class="contact-cards">
+          <div class="contact-card">
+            <div class="contact-card-icon">📍</div>
+            <div class="contact-card-text">
+              <strong>Visit Us</strong>
+              <span>12, MP Nagar Zone 1<br>Bhopal, Madhya Pradesh 462011</span>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon">📞</div>
+            <div class="contact-card-text">
+              <strong>Call Us</strong>
+              <span>+91 98765 43210<br>Open 11 AM – 11 PM Daily</span>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon">✉️</div>
+            <div class="contact-card-text">
+              <strong>Email Us</strong>
+              <span>hello@sweetscoops.in<br>We reply within 24 hours</span>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon">🕐</div>
+            <div class="contact-card-text">
+              <strong>Business Hours</strong>
+              <span>Mon–Fri: 11 AM – 11 PM<br>Sat–Sun: 10 AM – 12 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="map-placeholder">
+          <div class="map-placeholder-content">
+            <div style="font-size:32px">📍</div>
+            <p>MP Nagar, Bhopal</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT FORM -->
+      <div class="contact-form-wrap fade-up" data-delay="200">
+        <h2 class="form-title">Send a Message</h2>
+        <p class="form-subtitle">Fill in the form below and we'll get back to you soon.</p>
+
+        <div class="success-banner" id="successBanner">
+          <span>✅</span>
+          <p>Your message has been sent! We'll get back to you within 24 hours.</p>
+        </div>
+
+        <form id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="cFirstName" placeholder="Arjun" required>
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="cLastName" placeholder="Sharma">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="cEmail" placeholder="arjun@example.com" required>
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <select id="cSubject">
+              <option value="General Enquiry">General Enquiry</option>
+              <option value="Bulk Order">Bulk Order</option>
+              <option value="Catering">Catering / Event</option>
+              <option value="Complaint">Complaint</option>
+              <option value="Compliment">Compliment 😊</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Your Message</label>
+            <textarea id="cMessage" placeholder="Tell us anything..." style="min-height:140px" required></textarea>
+          </div>
+          <button type="submit" class="btn-gold submit-btn">Send Message ✉️</button>
+        </form>
+      </div>
+
+    </section>
+  </div>
+
+  <footer style="text-align:center;padding:40px;color:var(--text-dim);font-size:12px;letter-spacing:2px;border-top:1px solid rgba(201,168,76,0.1)">
+    © 2026 Sweet Scoops — Crafted with Love in Bhopal
+  </footer>
+
+  <script src="/js/navbar.js"></script>
+  <script>
+    initNavbar('contact');
+
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = this.querySelector('button[type="submit"]');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      const name = (document.getElementById('cFirstName').value + ' ' + document.getElementById('cLastName').value).trim();
+      const email = document.getElementById('cEmail').value;
+      const subject = document.getElementById('cSubject').value;
+      const message = `[${subject}] ` + document.getElementById('cMessage').value;
+
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById('successBanner').classList.add('show');
+        this.reset();
+        showToast('✅', 'Message Sent!', "We'll reply within 24 hours.");
+      } else {
+        showToast('❌', 'Failed', 'Please try again.');
+      }
+
+      btn.textContent = 'Send Message ✉️';
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>

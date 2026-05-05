@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Scoops — Menu</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <style>
+    /* ── Menu Hero ── */
+    .menu-hero {
+      min-height: 40vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=1400&q=70') center/cover no-repeat;
+      opacity: 0.1;
+    }
+
+    .menu-hero-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 120%, rgba(201,168,76,0.12), transparent);
+    }
+
+    .menu-hero-content {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .menu-hero-content h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 7vw, 80px);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+    }
+
+    .menu-hero-content h1 em { color: var(--gold); font-style: italic; }
+
+    .menu-hero-content p {
+      color: var(--text-dim);
+      font-size: 14px;
+      letter-spacing: 2px;
+      margin-top: 12px;
+    }
+
+    /* ── Filter Tabs ── */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 40px 80px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid rgba(201,168,76,0.15);
+      color: var(--text-dim);
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--dark);
+    }
+
+    /* ── Menu Grid ── */
+    .menu-grid {
+      padding: 0 80px 80px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    .menu-card {
+      background: var(--surface);
+      border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.4s;
+      animation: fadeUp 0.6s ease forwards;
+      opacity: 0;
+    }
+
+    .menu-card.hidden { display: none; }
+
+    .menu-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(201,168,76,0.3);
+      box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+    }
+
+    .card-img-wrap {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .menu-card:hover .card-img-wrap img { transform: scale(1.08); }
+
+    .card-badge {
+      position: absolute;
+      top: 14px; left: 14px;
+      background: rgba(201,168,76,0.9);
+      color: var(--dark);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .card-badge.new { background: #e8472a; color: white; }
+    .card-badge.vegan { background: #4caf72; color: white; }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    .card-category {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--gold);
+    }
+
+    .card-price span {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .btn-order {
+      background: var(--gold-pale);
+      border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold);
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-order:hover {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    /* ── Cart Panel ── */
+    .cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .cart-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-panel {
+      position: fixed;
+      top: 0; right: -440px;
+      width: 440px;
+      height: 100vh;
+      background: var(--dark2);
+      border-left: 1px solid rgba(201,168,76,0.15);
+      z-index: 2001;
+      transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .cart-panel.open { right: 0; }
+
+    .cart-header {
+      padding: 30px;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-header h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 300;
+      color: var(--cream);
+    }
+
+    .cart-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .cart-close:hover { color: var(--gold); }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 30px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(201,168,76,0.07);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .cart-item-icon { font-size: 28px; }
+
+    .cart-item-info { flex: 1; }
+
+    .cart-item-name {
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .cart-item-price {
+      color: var(--gold);
+      font-size: 13px;
+    }
+
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .qty-btn {
+      background: var(--surface2);
+      border: 1px solid rgba(201,168,76,0.2);
+      color: var(--gold);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .qty-btn:hover { background: var(--gold); color: var(--dark); }
+
+    .qty-num { color: var(--cream); font-size: 14px; min-width: 20px; text-align: center; }
+
+    .cart-empty {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .cart-empty p { color: var(--text-dim); font-size: 13px; margin-top: 16px; }
+
+    .cart-footer {
+      padding: 24px 30px;
+      border-top: 1px solid rgba(201,168,76,0.1);
+      background: var(--surface);
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .cart-total span { color: var(--text-dim); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+
+    .cart-total strong {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      color: var(--gold);
+    }
+
+    /* Cart button in navbar area */
+    .cart-fab {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      background: var(--gold);
+      color: var(--dark);
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(201,168,76,0.4);
+      transition: all 0.3s;
+      z-index: 1500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart-fab:hover { transform: scale(1.1); box-shadow: 0 16px 40px rgba(201,168,76,0.5); }
+
+    .cart-fab-count {
+      position: absolute;
+      top: -4px; right: -4px;
+      background: #e8472a;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 1024px) {
+      .menu-grid { grid-template-columns: repeat(2, 1fr); padding: 0 40px 80px; }
+      .filter-bar { padding: 30px 40px; }
+    }
+
+    @media (max-width: 640px) {
+      .menu-grid { grid-template-columns: 1fr; padding: 0 20px 60px; }
+      .cart-panel { width: 100%; right: -100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MENU HERO -->
+  <div class="page-wrapper">
+    <section class="menu-hero">
+      <div class="menu-hero-bg"></div>
+      <div class="menu-hero-glow"></div>
+      <div class="menu-hero-content">
+        <p class="text-dim" style="font-size:11px;letter-spacing:5px;text-transform:uppercase;margin-bottom:16px">Handcrafted with Love</p>
+        <h1>Our <em>Flavours</em></h1>
+        <p>24 Premium Ice Cream Creations</p>
+      </div>
+    </section>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All Flavours</button>
+      <button class="filter-btn" data-filter="classic">Classic</button>
+      <button class="filter-btn" data-filter="exotic">Exotic</button>
+      <button class="filter-btn" data-filter="chocolate">Chocolate</button>
+      <button class="filter-btn" data-filter="fruit">Fruit</button>
+      <button class="filter-btn" data-filter="vegan">Vegan</button>
+    </div>
+
+    <!-- MENU CARDS -->
+    <div class="menu-grid" id="menuGrid">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+
+  <!-- CART FAB -->
+  <button class="cart-fab" onclick="openCart()">
+    🛒
+    <span class="cart-fab-count" id="cartFabCount">0</span>
+  </button>
+
+  <!-- CART OVERLAY -->
+  <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+  <!-- CART PANEL -->
+  <div class="cart-panel" id="cartPanel">
+    <div class="cart-header">
+      <h3>Your Order</h3>
+      <button class="cart-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <div style="font-size:48px">🍦</div>
+        <p>Your cart is empty.<br>Add some delicious flavours!</p>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <strong id="cartTotal">₹ 0</strong>
+      </div>
+      <button class="btn-gold" style="width:100%;padding:16px;font-size:13px" onclick="placeOrder()">
+        Place Order ✨
+      </button>
+    </div>
+  </div>
+
+  <footer style="text-align:center;padding:40px;color:var(--text-dim);font-size:12px;letter-spacing:2px;border-top:1px solid rgba(201,168,76,0.1)">
+    © 2026 Sweet Scoops — Crafted with Love in Bhopal
+  </footer>
+
+  <script src="/js/navbar.js"></script>
+  <script>
+    initNavbar('menu');
+
+    // ── Menu Data ──────────────────────────────────────
+    const flavours = [
+      { id:1, name:"Mango Saffron Royale", category:"exotic", price:160, badge:"Bestseller", emoji:"🥭",
+        desc:"A divine fusion of Alphonso mangoes with hand-picked Kashmiri saffron, churned in rich cream for an intensely aromatic, golden indulgence.",
+        img:"https://images.unsplash.com/photo-1557142046-c704a3adf364?w=500&q=80" },
+      { id:2, name:"Dark Chocolate Noir", category:"chocolate", price:150, badge:"New", emoji:"🍫",
+        desc:"Single-origin 80% dark Belgian chocolate blended with fresh cream. Deep, bittersweet, and hauntingly smooth with a velvet finish.",
+        img:"https://images.unsplash.com/photo-1570197571499-166b36435e9f?w=500&q=80" },
+      { id:3, name:"Rose Petal & Pistachio", category:"exotic", price:170, badge:"Chef's Pick", emoji:"🌹",
+        desc:"Delicate Persian rose water ice cream swirled with hand-crushed Irani pistachios. A luxurious floral symphony in every bite.",
+        img:"https://images.unsplash.com/photo-1567206563064-6f60f40a2b57?w=500&q=80" },
+      { id:4, name:"Strawberry Champagne", category:"fruit", price:140, badge:"", emoji:"🍓",
+        desc:"Fresh Mahabaleshwar strawberries macerated overnight, folded into light cream with a hint of vanilla. Elegant and refreshing.",
+        img:"https://images.unsplash.com/photo-1488900128323-21503983a07e?w=500&q=80" },
+      { id:5, name:"Vanilla Bean Supreme", category:"classic", price:110, badge:"", emoji:"🤍",
+        desc:"Madagascar Bourbon vanilla beans steeped in pure cream. Deceptively simple, achingly perfect. The gold standard of ice cream.",
+        img:"https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=500&q=80" },
+      { id:6, name:"Belgian Hazelnut", category:"chocolate", price:155, badge:"", emoji:"🌰",
+        desc:"Roasted Italian hazelnuts blended with premium Belgian milk chocolate and a swirl of praline. Pure confectionery artistry.",
+        img:"https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=500&q=80" },
+      { id:7, name:"Tender Coconut Dream", category:"vegan", price:130, badge:"Vegan", emoji:"🥥",
+        desc:"Cold-pressed tender coconut water frozen with fresh coconut cream and toasted flakes. Light, tropical, and naturally sweet.",
+        img:"https://images.unsplash.com/photo-1505394033641-40908e65cb19?w=500&q=80" },
+      { id:8, name:"Blueberry Cheesecake", category:"classic", price:160, badge:"", emoji:"🫐",
+        desc:"Wild blueberry compote ribboned through velvety cream cheese ice cream on a buttery graham cracker base. Dessert inception.",
+        img:"https://images.unsplash.com/photo-1464219551459-ac14ae01fbe0?w=500&q=80" },
+      { id:9, name:"Kesar Pista Special", category:"exotic", price:175, badge:"Premium", emoji:"🌟",
+        desc:"Our signature recipe — pure Gujarati saffron threads dissolved in warm milk, churned with crushed pistachios and cardamom. Royalty in a cup.",
+        img:"https://images.unsplash.com/photo-1524351199678-941a58a3df50?w=500&q=80" },
+      { id:10, name:"Lychee Sorbet", category:"vegan", price:125, badge:"Vegan", emoji:"🍈",
+        desc:"100% fruit-based. Fresh lychees blended with a squeeze of lime and frozen to a silky, palate-cleansing sorbet. Dairy-free perfection.",
+        img:"https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=500&q=80" },
+      { id:11, name:"Salted Caramel Toffee", category:"classic", price:145, badge:"", emoji:"🍮",
+        desc:"House-made salted caramel ribbon wound through toffee ice cream with shards of dark chocolate bark. The perfect balance.",
+        img:"https://images.unsplash.com/photo-1500520198921-6d4704f98092?w=500&q=80" },
+      { id:12, name:"Matcha White Chocolate", category:"exotic", price:165, badge:"New", emoji:"🍵",
+        desc:"Premium ceremonial grade Japanese matcha balanced with smooth white chocolate chips. Earthy, bittersweet, and utterly distinctive.",
+        img:"https://images.unsplash.com/photo-1459789034005-ba29a5dae1ff?w=500&q=80" }
+    ];
+
+    // ── Cart State ──────────────────────────────────────
+    let cart = {}; // { id: { item, qty } }
+
+    function addToCart(id) {
+      const item = flavours.find(f => f.id === id);
+      if (!item) return;
+      if (cart[id]) cart[id].qty++;
+      else cart[id] = { item, qty: 1 };
+      updateCartUI();
+      showToast('🍦', item.name, 'Added to your order!');
+      animateCartFab();
+    }
+
+    function removeFromCart(id) {
+      if (!cart[id]) return;
+      cart[id].qty--;
+      if (cart[id].qty <= 0) delete cart[id];
+      updateCartUI();
+    }
+
+    function animateCartFab() {
+      const fab = document.querySelector('.cart-fab');
+      fab.style.transform = 'scale(1.3)';
+      setTimeout(() => fab.style.transform = '', 200);
+    }
+
+    function updateCartUI() {
+      const total = Object.values(cart).reduce((s, c) => s + c.item.price * c.qty, 0);
+      const count = Object.values(cart).reduce((s, c) => s + c.qty, 0);
+
+      document.getElementById('cartFabCount').textContent = count;
+      document.getElementById('cartTotal').textContent = '₹ ' + total;
+
+      const itemsEl = document.getElementById('cartItems');
+      if (count === 0) {
+        itemsEl.innerHTML = `<div class="cart-empty"><div style="font-size:48px">🍦</div><p>Your cart is empty.<br>Add some delicious flavours!</p></div>`;
+        return;
+      }
+
+      itemsEl.innerHTML = Object.values(cart).map(({ item, qty }) => `
+        <div class="cart-item">
+          <div class="cart-item-icon">${item.emoji}</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">₹ ${item.price} × ${qty} = ₹ ${item.price * qty}</div>
+          </div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="removeFromCart(${item.id})">−</button>
+            <span class="qty-num">${qty}</span>
+            <button class="qty-btn" onclick="addToCart(${item.id})">+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openCart() {
+      document.getElementById('cartPanel').classList.add('open');
+      document.getElementById('cartOverlay').classList.add('open');
+    }
+
+    function closeCart() {
+      document.getElementById('cartPanel').classList.remove('open');
+      document.getElementById('cartOverlay').classList.remove('open');
+    }
+
+    async function placeOrder() {
+      const items = Object.values(cart);
+      if (items.length === 0) return;
+
+      try {
+        for (const { item, qty } of items) {
+          await fetch('/api/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_name: item.name, quantity: qty, price: item.price * qty })
+          });
+        }
+        cart = {};
+        updateCartUI();
+        closeCart();
+        showToast('✅', 'Order Placed!', 'Your sweet treats are on the way!');
+      } catch (e) {
+        showToast('❌', 'Order Failed', 'Please try again.');
+      }
+    }
+
+    // ── Render Menu ──────────────────────────────────────
+    function renderMenu(filter = 'all') {
+      const grid = document.getElementById('menuGrid');
+      const filtered = filter === 'all' ? flavours : flavours.filter(f => f.category === filter);
+
+      grid.innerHTML = filtered.map((f, i) => `
+        <div class="menu-card" style="animation-delay:${i * 80}ms">
+          <div class="card-img-wrap">
+            <img src="${f.img}" alt="${f.name}" loading="lazy">
+            ${f.badge ? `<div class="card-badge ${f.badge==='New'?'new':f.badge==='Vegan'?'vegan':''}">${f.badge}</div>` : ''}
+          </div>
+          <div class="card-body">
+            <div class="card-category">${f.category}</div>
+            <div class="card-name">${f.name}</div>
+            <div class="card-desc">${f.desc}</div>
+            <div class="card-footer">
+              <div class="card-price">₹ ${f.price} <span>/ scoop</span></div>
+              <button class="btn-order" onclick="addToCart(${f.id})">
+                Add 🍦
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderMenu(btn.dataset.filter);
+      });
+    });
+
+    renderMenu();
+  </script>
+</body>
+</html>
