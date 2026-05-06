@@ -411,7 +411,7 @@ app.get('/admin/db', (req, res) => {
   <div class="header">
     <h1>🍦 Sweet Scoops <span>Admin</span></h1>
     <p>DATABASE VIEWER</p>
-<span class="timestamp">Last refreshed: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST</span>  </div>
+<span class="timestamp">Last refreshed: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} </span>  </div>
 
   <div class="stats">
     <div class="stat-box">
