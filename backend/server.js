@@ -33,6 +33,11 @@ function writeDB(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
+// ── IST Time Helper ─────────────────────────────────────────────────────────
+function nowIST() {
+  return new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+}
+
 // Seed default feedback on first run
 if (!fs.existsSync(DB_FILE)) {
   writeDB({
@@ -40,11 +45,11 @@ if (!fs.existsSync(DB_FILE)) {
     orders: [],
     contacts: [],
     feedback: [
-      { id: 1, name: "Priya Sharma",  rating: 5, message: "Absolutely divine! The Mango Bliss is life-changing. The texture, the richness — pure luxury in every scoop.", submitted_at: new Date().toISOString() },
-      { id: 2, name: "Arjun Mehta",   rating: 5, message: "Sweet Scoops has ruined every other ice cream for me. Nothing compares. The Rose Petal flavour is a dream.", submitted_at: new Date().toISOString() },
-      { id: 3, name: "Sneha Kapoor",  rating: 5, message: "Came here for the Pistachio Royale and stayed for everything else. The ambiance matches the premium quality perfectly.", submitted_at: new Date().toISOString() },
-      { id: 4, name: "Rahul Verma",   rating: 4, message: "The presentation is stunning and the taste is incredible. Dark Chocolate Noir is my new obsession.", submitted_at: new Date().toISOString() },
-      { id: 5, name: "Ananya Singh",  rating: 5, message: "Every single flavour tells a story. Sweet Scoops is not just ice cream — it's an experience. Highly recommend!", submitted_at: new Date().toISOString() }
+      { id: 1, name: "Priya Sharma",  rating: 5, message: "Absolutely divine! The Mango Bliss is life-changing. The texture, the richness — pure luxury in every scoop.", submitted_at: nowIST() },
+      { id: 2, name: "Arjun Mehta",   rating: 5, message: "Sweet Scoops has ruined every other ice cream for me. Nothing compares. The Rose Petal flavour is a dream.", submitted_at: nowIST() },
+      { id: 3, name: "Sneha Kapoor",  rating: 5, message: "Came here for the Pistachio Royale and stayed for everything else. The ambiance matches the premium quality perfectly.", submitted_at: nowIST() },
+      { id: 4, name: "Rahul Verma",   rating: 4, message: "The presentation is stunning and the taste is incredible. Dark Chocolate Noir is my new obsession.", submitted_at: nowIST() },
+      { id: 5, name: "Ananya Singh",  rating: 5, message: "Every single flavour tells a story. Sweet Scoops is not just ice cream — it's an experience. Highly recommend!", submitted_at: nowIST() }
     ]
   });
 }
@@ -92,7 +97,7 @@ app.post('/api/signup', (req, res) => {
     return res.json({ success: false, message: 'Email already registered.' });
 
   const hash = bcrypt.hashSync(password, 10);
-  const newUser = { id: Date.now(), name, email, password: hash, created_at: new Date().toISOString() };
+  const newUser = { id: Date.now(), name, email, password: hash, created_at: nowIST() };
   db.users.push(newUser);
   writeDB(db);
 
@@ -130,7 +135,7 @@ app.post('/api/order', requireAuth, (req, res) => {
     id: Date.now(),
     user_id: req.session.user.id,
     item_name, quantity, price,
-    ordered_at: new Date().toISOString()
+    ordered_at: nowIST()
   };
   db.orders.push(newOrder);
   writeDB(db);
@@ -152,7 +157,7 @@ app.post('/api/contact', (req, res) => {
     return res.json({ success: false, message: 'All fields required.' });
 
   const db = readDB();
-  db.contacts.push({ id: Date.now(), name, email, message, submitted_at: new Date().toISOString() });
+  db.contacts.push({ id: Date.now(), name, email, message, submitted_at: nowIST() });
   writeDB(db);
   res.json({ success: true });
 });
@@ -164,7 +169,7 @@ app.post('/api/feedback', (req, res) => {
     return res.json({ success: false, message: 'All fields required.' });
 
   const db = readDB();
-  db.feedback.unshift({ id: Date.now(), name, rating: parseInt(rating), message, submitted_at: new Date().toISOString() });
+  db.feedback.unshift({ id: Date.now(), name, rating: parseInt(rating), message, submitted_at: nowIST() });
   writeDB(db);
   res.json({ success: true });
 });
@@ -201,25 +206,27 @@ app.get('/admin/db', (req, res) => {
   // Clean users (hide passwords)
   const users = db.users.map(u => ({
     id: u.id, name: u.name, email: u.email,
-    created_at: u.created_at ? new Date(u.created_at).toLocaleString('en-IN') : '—'
+    created_at: u.created_at ? new Date(u.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+ : '—'
   }));
 
   const orders = db.orders.map(o => ({
     id: o.id, user_id: o.user_id, item_name: o.item_name,
     quantity: o.quantity, price: o.price,
-    ordered_at: o.ordered_at ? new Date(o.ordered_at).toLocaleString('en-IN') : '—'
+    ordered_at: o.ordered_at ? new Date(o.ordered_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+ : '—'
   }));
 
   const contacts = db.contacts.map(c => ({
     id: c.id, name: c.name, email: c.email,
     message: c.message?.length > 60 ? c.message.slice(0, 60) + '...' : c.message,
-    submitted_at: c.submitted_at ? new Date(c.submitted_at).toLocaleString('en-IN') : '—'
+    submitted_at: c.submitted_at ? new Date(c.submitted_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '—'
   }));
 
   const feedback = db.feedback.map(f => ({
     id: f.id, name: f.name, rating: '★'.repeat(f.rating) + '☆'.repeat(5 - f.rating),
     message: f.message?.length > 60 ? f.message.slice(0, 60) + '...' : f.message,
-    submitted_at: f.submitted_at ? new Date(f.submitted_at).toLocaleString('en-IN') : '—'
+    submitted_at: f.submitted_at ? new Date(f.submitted_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '—'
   }));
 
   const html = `<!DOCTYPE html>
@@ -404,8 +411,7 @@ app.get('/admin/db', (req, res) => {
   <div class="header">
     <h1>🍦 Sweet Scoops <span>Admin</span></h1>
     <p>DATABASE VIEWER</p>
-    <span class="timestamp">Last refreshed: ${new Date().toLocaleString('en-IN')}</span>
-  </div>
+<span class="timestamp">Last refreshed: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST</span>  </div>
 
   <div class="stats">
     <div class="stat-box">
