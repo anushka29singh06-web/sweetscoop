@@ -174,5 +174,272 @@ app.get('/api/feedback', (req, res) => {
   res.json({ feedback: db.feedback.slice(0, 20) });
 });
 
+app.get('/admin/db', (req, res) => {
+  const db = readDB();
+
+  const tableHTML = (title, emoji, headers, rows, emptyMsg) => {
+    const headerHTML = headers.map(h => `<th>${h}</th>`).join('');
+    const rowsHTML = rows.length === 0
+      ? `<tr><td colspan="${headers.length}" class="empty">${emptyMsg}</td></tr>`
+      : rows.map(row => `<tr>${headers.map(h => `<td>${row[h.toLowerCase().replace(/ /g,'_')] ?? '—'}</td>`).join('')}</tr>`).join('');
+    return `
+      <div class="card">
+        <div class="card-header">
+          <span class="emoji">${emoji}</span>
+          <h2>${title}</h2>
+          <span class="badge">${rows.length} records</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>${headerHTML}</tr></thead>
+            <tbody>${rowsHTML}</tbody>
+          </table>
+        </div>
+      </div>`;
+  };
+
+  // Clean users (hide passwords)
+  const users = db.users.map(u => ({
+    id: u.id, name: u.name, email: u.email,
+    created_at: u.created_at ? new Date(u.created_at).toLocaleString('en-IN') : '—'
+  }));
+
+  const orders = db.orders.map(o => ({
+    id: o.id, user_id: o.user_id, item_name: o.item_name,
+    quantity: o.quantity, price: o.price,
+    ordered_at: o.ordered_at ? new Date(o.ordered_at).toLocaleString('en-IN') : '—'
+  }));
+
+  const contacts = db.contacts.map(c => ({
+    id: c.id, name: c.name, email: c.email,
+    message: c.message?.length > 60 ? c.message.slice(0, 60) + '...' : c.message,
+    submitted_at: c.submitted_at ? new Date(c.submitted_at).toLocaleString('en-IN') : '—'
+  }));
+
+  const feedback = db.feedback.map(f => ({
+    id: f.id, name: f.name, rating: '★'.repeat(f.rating) + '☆'.repeat(5 - f.rating),
+    message: f.message?.length > 60 ? f.message.slice(0, 60) + '...' : f.message,
+    submitted_at: f.submitted_at ? new Date(f.submitted_at).toLocaleString('en-IN') : '—'
+  }));
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sweet Scoops — Admin DB Viewer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .header h1 span { color: #f4c430; }
+    .header p { font-size: 14px; color: #666; letter-spacing: 1px; }
+    .timestamp {
+      display: inline-block;
+      margin-top: 12px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    /* Stats row */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .stat-box {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 20px 32px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .stat-box .num {
+      font-size: 36px;
+      font-weight: 700;
+      color: #f4c430;
+      display: block;
+    }
+    .stat-box .label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* Cards */
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 32px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 24px;
+      background: #111;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .emoji { font-size: 22px; }
+    .card-header h2 { font-size: 18px; font-weight: 600; color: #fff; flex: 1; }
+    .badge {
+      background: #f4c43022;
+      color: #f4c430;
+      border: 1px solid #f4c43044;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    thead tr {
+      background: #111;
+    }
+    th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #f4c430;
+      font-weight: 600;
+      border-bottom: 1px solid #2a2a2a;
+      white-space: nowrap;
+    }
+    td {
+      padding: 14px 20px;
+      border-bottom: 1px solid #1f1f1f;
+      color: #ccc;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #222; }
+
+    td:first-child {
+      color: #666;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .empty {
+      text-align: center;
+      color: #444;
+      font-style: italic;
+      padding: 40px !important;
+    }
+
+    /* Refresh button */
+    .refresh-btn {
+      display: block;
+      margin: 0 auto 40px;
+      background: #f4c430;
+      color: #000;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-decoration: none;
+      text-align: center;
+      width: fit-content;
+    }
+    .refresh-btn:hover { background: #e6b820; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 12px;
+      color: #333;
+    }
+
+    @media (max-width: 600px) {
+      th, td { padding: 10px 12px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🍦 Sweet Scoops <span>Admin</span></h1>
+    <p>DATABASE VIEWER</p>
+    <span class="timestamp">Last refreshed: ${new Date().toLocaleString('en-IN')}</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat-box">
+      <span class="num">${db.users.length}</span>
+      <span class="label">👤 Users</span>
+    </div>
+    <div class="stat-box">
+      <span class="num">${db.orders.length}</span>
+      <span class="label">🛒 Orders</span>
+    </div>
+    <div class="stat-box">
+      <span class="num">${db.contacts.length}</span>
+      <span class="label">✉️ Messages</span>
+    </div>
+    <div class="stat-box">
+      <span class="num">${db.feedback.length}</span>
+      <span class="label">⭐ Reviews</span>
+    </div>
+  </div>
+
+  <a class="refresh-btn" href="/admin/db">🔄 Refresh Data</a>
+
+  ${tableHTML('Users', '👤', ['ID', 'Name', 'Email', 'Created_at'], users, 'No users registered yet.')}
+  ${tableHTML('Orders', '🛒', ['ID', 'User_id', 'Item_name', 'Quantity', 'Price', 'Ordered_at'], orders, 'No orders placed yet.')}
+  ${tableHTML('Contact Messages', '✉️', ['ID', 'Name', 'Email', 'Message', 'Submitted_at'], contacts, 'No contact messages yet.')}
+  ${tableHTML('Feedback & Reviews', '⭐', ['ID', 'Name', 'Rating', 'Message', 'Submitted_at'], feedback, 'No feedback submitted yet.')}
+
+  <div class="footer">Sweet Scoops Admin Panel • ${new Date().getFullYear()}</div>
+
+</body>
+</html>`;
+
+  res.send(html);
+});
+
 // ── Start ───────────────────────────────────────────────────────────────────
 app.listen(PORT, () => console.log(`🍦 Sweet Scoops running at http://localhost:${PORT}`));
